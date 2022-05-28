@@ -1,9 +1,8 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from datetime import datetime
-from typing import Optional
 
+from covid_screener.domain.exceptions.exceptions import VaccinationException
 from covid_screener.domain.model.base_model import BaseModel
 
 
@@ -12,6 +11,12 @@ class Screening(BaseModel):
         super().__init__()
         self.employee = employee
         self.questionnaire = questionnaire
+        self.verify_vaccination()
+
+    def verify_vaccination(self):
+        if not self.questionnaire.is_vaccinated:
+            raise VaccinationException(f'Hi {self.employee.name}, you are '
+                                       f'required to be vaccinated by HR.')
 
     def is_covid_positive(self) -> bool:
         return self.questionnaire.has_tested_positive
@@ -25,7 +30,8 @@ class Screening(BaseModel):
         if self.is_covid_positive():
             message = f'We wish you a speedy recovery and we advise you ' \
                       f'take the next 2 weeks to rest and recover.'
-        elif self.has_covid_symptoms():
+        elif self.has_covid_symptoms() and \
+                not self.questionnaire.positive_in_last_fortnight:
             message = f'In the best efforts to keep you and all our ' \
                       f'colleagues in the {self.employee.department.name} ' \
                       f'department safe, we recommend you to take a covid ' \
@@ -37,13 +43,13 @@ class Questionnaire(BaseModel):
     def __init__(self, symptom: Symptom, has_tested_positive: bool,
                  awaiting_test_results: bool,
                  positive_in_last_fortnight: bool,
-                 last_test_date: Optional[datetime]):
+                 is_vaccinated: bool):
         super().__init__()
         self.symptom = symptom
         self.has_tested_positive = has_tested_positive
         self.awaiting_test_results = awaiting_test_results
         self.positive_in_last_fortnight = positive_in_last_fortnight
-        self.last_test_date = last_test_date
+        self.is_vaccinated = is_vaccinated
 
 
 @dataclass(unsafe_hash=True)

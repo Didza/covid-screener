@@ -1,0 +1,2 @@
+class VaccinationException(Exception):
+    pass
