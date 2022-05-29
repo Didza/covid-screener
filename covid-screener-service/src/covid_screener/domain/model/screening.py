@@ -92,3 +92,11 @@ class Department(BaseModel):
     def __init__(self, name: str):
         super().__init__()
         self.name = name
+
+    def __eq__(self, other):
+        if not isinstance(other, Department):
+            return False
+        return other.name == self.name
+
+    def __repr__(self):
+        return f'Department name: {self.name}'
