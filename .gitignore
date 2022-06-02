@@ -127,3 +127,6 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+covid-screener-service/.idea/modules.xml
+.idea/covid-screener.iml
+.idea/
