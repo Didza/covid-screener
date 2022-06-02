@@ -51,6 +51,22 @@ class Questionnaire(BaseModel):
         self.positive_in_last_fortnight = positive_in_last_fortnight
         self.is_vaccinated = is_vaccinated
 
+    def __eq__(self, other):
+        if not isinstance(other, Questionnaire):
+            return False
+        return self.symptom == other.symptom and \
+            self.has_tested_positive == other.has_tested_positive and \
+            self.awaiting_test_results == other.awaiting_test_results and \
+            self.positive_in_last_fortnight == other.positive_in_last_fortnight and \
+            self.is_vaccinated == other.is_vaccinated
+
+    def __repr__(self):
+        return f'Questionnaire symptom:{self.symptom} ' \
+            f'has_tested_positive:{self.has_tested_positive} ' \
+            f'awaiting_test_results:{self.awaiting_test_results} ' \
+            f'positive_in_last_fortnight: {self.positive_in_last_fortnight} '\
+            f'is_vaccinated:{self.is_vaccinated} '
+
 
 @dataclass(unsafe_hash=True)
 class Symptom:
@@ -87,6 +103,14 @@ class Employee(BaseModel):
         self.department = department
         self.is_admin = is_admin
 
+    def __eq__(self, other):
+        if not isinstance(other, Employee):
+            return False
+        return self.username == other.username and self.email == other.email
+
+    def __repr__(self):
+        return f'Employee username:{self.username} email:{self.email}'
+
 
 class Department(BaseModel):
     def __init__(self, name: str):
@@ -99,4 +123,4 @@ class Department(BaseModel):
         return other.name == self.name
 
     def __repr__(self):
-        return f'Department name: {self.name}'
+        return f'Department name:{self.name}'

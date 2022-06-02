@@ -25,8 +25,8 @@ employees = Table(
     Column('name', String(100), nullable=False),
     Column('surname', String(100), nullable=False),
     Column('email', String(100), nullable=False, index=True),
-    Column('department_id', Integer, ForeignKey('departments.id'),
-           nullable=False, index=True),
+    Column('is_admin', Boolean, nullable=False),
+    Column('department_id', Integer, ForeignKey('departments.id'), index=True),
 )
 
 symptoms = Table(
@@ -60,8 +60,7 @@ screenings = Table(
     'Screenings', metadata,
     *get_standard_columns(),
     Column('employee_id', Integer, ForeignKey('employees.id'), nullable=False),
-    Column('questionnaire_id', Integer, ForeignKey('questionnaires.id'),
-           nullable=False),
+    Column('questionnaire_id', Integer, ForeignKey('questionnaires.id')),
 )
 
 

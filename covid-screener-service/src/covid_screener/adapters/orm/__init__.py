@@ -8,7 +8,7 @@ from sqlalchemy import (
 
 
 def get_standard_columns():
-    return [Column("id", Integer, primary_key=True),
+    return [Column("id", Integer, primary_key=True, autoincrement=True),
             Column("is_active", Boolean, nullable=False, index=True,
                    default=True),
             Column("uuid", GUID, unique=True,
