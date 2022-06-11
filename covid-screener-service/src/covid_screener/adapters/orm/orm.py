@@ -57,7 +57,7 @@ questionnaires = Table(
 )
 
 screenings = Table(
-    'Screenings', metadata,
+    'screenings', metadata,
     *get_standard_columns(),
     Column('employee_id', Integer, ForeignKey('employees.id'), nullable=False),
     Column('questionnaire_id', Integer, ForeignKey('questionnaires.id')),

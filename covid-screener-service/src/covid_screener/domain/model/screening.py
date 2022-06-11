@@ -13,6 +13,16 @@ class Screening(BaseModel):
         self.questionnaire = questionnaire
         self.verify_vaccination()
 
+    def __eq__(self, other):
+        if not isinstance(other, Screening):
+            return False
+        return self.employee == other.employee and \
+            self.questionnaire == other.questionnaire
+
+    def __repr__(self):
+        return f'Screening employee:{self.employee} ' \
+               f'questionnaire:{self.questionnaire}'
+
     def verify_vaccination(self):
         if not self.questionnaire.is_vaccinated:
             raise VaccinationException(f'Hi {self.employee.name}, you are '
@@ -62,10 +72,10 @@ class Questionnaire(BaseModel):
 
     def __repr__(self):
         return f'Questionnaire symptom:{self.symptom} ' \
-            f'has_tested_positive:{self.has_tested_positive} ' \
-            f'awaiting_test_results:{self.awaiting_test_results} ' \
-            f'positive_in_last_fortnight: {self.positive_in_last_fortnight} '\
-            f'is_vaccinated:{self.is_vaccinated} '
+               f'has_tested_positive:{self.has_tested_positive} ' \
+               f'awaiting_test_results:{self.awaiting_test_results} ' \
+               f'positive_in_last_fortnight: {self.positive_in_last_fortnight} ' \
+               f'is_vaccinated:{self.is_vaccinated} '
 
 
 @dataclass(unsafe_hash=True)
