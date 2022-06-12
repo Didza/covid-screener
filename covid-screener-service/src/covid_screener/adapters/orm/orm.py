@@ -15,16 +15,16 @@ metadata = MetaData()
 departments = Table(
     'departments', metadata,
     *get_standard_columns(),
-    Column('name', String(100), nullable=False, index=True)
+    Column('name', String(100), unique=True, nullable=False, index=True)
 )
 
 employees = Table(
     'employees', metadata,
     *get_standard_columns(),
-    Column('username', String(100), nullable=False, index=True),
+    Column('username', String(100), unique=True, nullable=False, index=True),
     Column('name', String(100), nullable=False),
     Column('surname', String(100), nullable=False),
-    Column('email', String(100), nullable=False, index=True),
+    Column('email', String(100), unique=True, nullable=False, index=True),
     Column('is_admin', Boolean, nullable=False),
     Column('department_id', Integer, ForeignKey('departments.id'), index=True),
 )
