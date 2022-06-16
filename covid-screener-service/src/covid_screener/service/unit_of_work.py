@@ -12,7 +12,7 @@ from sqlalchemy.orm import sessionmaker, Session
 
 
 class AbstractUnitOfWork(abc.ABC):
-    department: AbstractRepository
+    department: AbstractRepository  # type: DepartmentRepository
     symptom: AbstractRepository
     question: AbstractRepository
     screening: AbstractRepository

@@ -134,3 +134,6 @@ class Department(BaseModel):
 
     def __repr__(self):
         return f'Department name:{self.name}'
+
+    def __hash__(self):
+        return hash(self.uuid)
