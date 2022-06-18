@@ -89,10 +89,10 @@ class TestScreening:
             Screening(employee=employee, questionnaire=questionnaire)
 
     def test_screening_can_flag_a_positive(self, has_covid_screening):
-        assert has_covid_screening.is_covid_positive() == True
+        assert has_covid_screening.is_covid_positive()
 
     def test_screening_can_flag_symptoms(self, has_symptoms_only_screening):
-        assert has_symptoms_only_screening.has_covid_symptoms() == True
+        assert has_symptoms_only_screening.has_covid_symptoms()
 
     def test_correct_message_for_covid_positive(self, has_covid_screening):
         message = f'We wish you a speedy recovery and we advise you ' \

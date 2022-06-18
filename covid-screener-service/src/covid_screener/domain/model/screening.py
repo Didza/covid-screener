@@ -17,11 +17,14 @@ class Screening(BaseModel):
         if not isinstance(other, Screening):
             return False
         return self.employee == other.employee and \
-            self.questionnaire == other.questionnaire
+               self.questionnaire == other.questionnaire
 
     def __repr__(self):
         return f'Screening employee:{self.employee} ' \
                f'questionnaire:{self.questionnaire}'
+
+    def __hash__(self):
+        return hash(self.uuid)
 
     def verify_vaccination(self):
         if not self.questionnaire.is_vaccinated:
@@ -65,10 +68,10 @@ class Questionnaire(BaseModel):
         if not isinstance(other, Questionnaire):
             return False
         return self.symptom == other.symptom and \
-            self.has_tested_positive == other.has_tested_positive and \
-            self.awaiting_test_results == other.awaiting_test_results and \
-            self.positive_in_last_fortnight == other.positive_in_last_fortnight and \
-            self.is_vaccinated == other.is_vaccinated
+               self.has_tested_positive == other.has_tested_positive and \
+               self.awaiting_test_results == other.awaiting_test_results and \
+               self.positive_in_last_fortnight == other.positive_in_last_fortnight and \
+               self.is_vaccinated == other.is_vaccinated
 
     def __repr__(self):
         return f'Questionnaire symptom:{self.symptom} ' \
@@ -120,6 +123,9 @@ class Employee(BaseModel):
 
     def __repr__(self):
         return f'Employee username:{self.username} email:{self.email}'
+
+    def __hash__(self):
+        return hash(self.uuid)
 
 
 class Department(BaseModel):

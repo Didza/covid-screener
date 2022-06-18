@@ -3,19 +3,20 @@ import abc
 
 from covid_screener.adapters.repository.repository import AbstractRepository, \
     DepartmentRepository, SymptomRepository, QuestionnaireRepository, \
-    ScreeningRepository
+    ScreeningRepository, EmployeeRepository
 from covid_screener.config import config
 from covid_screener.domain.model.screening import Department, Symptom, \
-    Questionnaire, Screening
+    Questionnaire, Screening, Employee
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, Session
 
 
 class AbstractUnitOfWork(abc.ABC):
-    department: AbstractRepository  # type: DepartmentRepository
-    symptom: AbstractRepository
-    question: AbstractRepository
-    screening: AbstractRepository
+    departments: AbstractRepository
+    employees: AbstractRepository
+    symptoms: AbstractRepository
+    questions: AbstractRepository
+    screenings: AbstractRepository
 
     def __enter__(self) -> AbstractUnitOfWork:
         return self
@@ -44,10 +45,11 @@ class SqlAlchemyUnitOfWork(AbstractUnitOfWork):
 
     def __enter__(self):
         self.session = self.session_factory()  # type: Session
-        self.department = DepartmentRepository(self.session, Department)
-        self.symptom = SymptomRepository(self.session, Symptom)
-        self.question = QuestionnaireRepository(self.session, Questionnaire)
-        self.screening = ScreeningRepository(self.session, Screening)
+        self.departments = DepartmentRepository(self.session, Department)
+        self.employees = EmployeeRepository(self.session, Employee)
+        self.symptoms = SymptomRepository(self.session, Symptom)
+        self.questions = QuestionnaireRepository(self.session, Questionnaire)
+        self.screenings = ScreeningRepository(self.session, Screening)
         return super().__enter__()
 
     def __exit__(self, *args):
