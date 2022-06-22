@@ -26,7 +26,7 @@ class SqlAlchemyRepository(AbstractRepository):
 
     def get(self, identifier: UUID) -> BaseModel:
         return self.session.query(self.model).filter_by(
-            uuid=identifier).one()
+            uuid=identifier).first()
 
     def load_all(self):
         return self.session.query(self.model).all()
