@@ -1,7 +1,3 @@
-import uuid
-from datetime import datetime
-
-from covid_screener.domain.exceptions.exceptions import ValidationError
 from covid_screener.domain.model.screening import Questionnaire, Symptom, \
     Screening, Department, Employee
 from covid_screener.service.unit_of_work import SqlAlchemyUnitOfWork
@@ -31,4 +27,4 @@ class TestUow:
             uow.screenings.add(screening)
             uow.commit()
             result = uow.screenings.load_all()
-            assert result != 0
+            assert len(result) == 1
