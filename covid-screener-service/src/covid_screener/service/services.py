@@ -4,6 +4,7 @@ from uuid import UUID
 from covid_screener.domain.exceptions.exceptions import ValidationError
 from covid_screener.domain.model.screening import Department, Employee, \
     Symptom, Questionnaire, Screening
+from covid_screener.service.transformer import base_response
 from covid_screener.service.unit_of_work import AbstractUnitOfWork
 
 
@@ -14,7 +15,7 @@ def create_department(name: str, uow: AbstractUnitOfWork):
             department = Department(name)
             uow.departments.add(department)
             uow.commit()
-        return str(department.uuid)
+        return base_response(department)
 
 
 def edit_department(department_uuid: UUID, name: Optional[str],
@@ -25,13 +26,13 @@ def edit_department(department_uuid: UUID, name: Optional[str],
             raise ValidationError('This department does not exist.')
         department.name = name
         uow.commit()
-        return str(department.uuid)
+        return base_response(department)
 
 
 def load_departments(uow: AbstractUnitOfWork):
     with uow:
         departments = uow.departments.load_all()
-        return departments
+        return base_response(departments)
 
 
 def create_employee(username: str, name: str, surname: str, email: str,

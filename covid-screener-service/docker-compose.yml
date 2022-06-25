@@ -1,0 +1,24 @@
+version: '3.5'
+
+networks:
+  covid-screener-network:
+    name: covid_screener_default
+
+volumes:
+    postgres_data:
+
+services:
+  covid-screener-postgres:
+    image: postgres:13
+    container_name: covid-screener-postgres
+    restart: always
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=covidscreener
+      - POSTGRES_PASSWORD=test1234
+      - POSTGRES_INITDB_ARGS=--encoding=UTF-8
+    ports:
+      - 16005:5432
+    networks:
+      - covid-screener-network
