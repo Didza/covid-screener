@@ -4,7 +4,8 @@ import abc
 from typing import Union, List, Dict, Type
 
 from covid_screener.domain.model.base_model import BaseModel
-from covid_screener.domain.model.screening import Department, Employee
+from covid_screener.domain.model.screening import Department, Employee, \
+    Screening
 
 
 class AbstractTransformer(abc.ABC):
@@ -55,6 +56,47 @@ class EmployeeTransformer(AbstractTransformer):
         }
 
 
+class ScreeningTransformer(AbstractTransformer):
+    @staticmethod
+    def _build_json(item: Screening):
+        return {
+            "uuid": str(item.uuid),
+            "employee": {
+               "uuid": str(item.employee.uuid),
+               "name": item.employee.name,
+            },
+            "questionnaire": {
+                "symptoms": {
+                    "has_fever": item.questionnaire.symptom.has_fever,
+                    "has_cough": item.questionnaire.symptom.has_cough,
+                    "has_shortness_of_breath":
+                        item.questionnaire.symptom.has_shortness_of_breath,
+                    "has_fatigue": item.questionnaire.symptom.has_fatigue,
+                    "has_body_aches":
+                        item.questionnaire.symptom.has_body_aches,
+                    "has_loss_of_taste":
+                        item.questionnaire.symptom.has_loss_of_taste,
+                    "has_loss_of_smell":
+                        item.questionnaire.symptom.has_loss_of_smell,
+                    "has_sore_throat":
+                        item.questionnaire.symptom.has_sore_throat,
+                    "has_runny_nose":
+                        item.questionnaire.symptom.has_runny_nose,
+                    "has_nausea": item.questionnaire.symptom.has_nausea,
+                    "is_vomiting": item.questionnaire.symptom.is_vomiting,
+                    "has_diarrhea": item.questionnaire.symptom.has_diarrhea,
+                },
+                "has_tested_positive": item.questionnaire.has_tested_positive,
+                "awaiting_test_results":
+                    item.questionnaire.awaiting_test_results,
+                "positive_in_last_fortnight":
+                    item.questionnaire.positive_in_last_fortnight,
+                "is_vaccinated": item.questionnaire.is_vaccinated,
+            },
+            "is_active": item.is_active
+        }
+
+
 def base_response(data: Union[BaseModel, List[BaseModel]]):
     if not data:
         return {'items': []}
@@ -69,4 +111,5 @@ def base_response(data: Union[BaseModel, List[BaseModel]]):
 TRANSFORMERS = {
     Department: DepartmentTransformer,
     Employee: EmployeeTransformer,
+    Screening: ScreeningTransformer,
 }  # type: Dict[Type[BaseModel], Type[AbstractTransformer]]

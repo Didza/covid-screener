@@ -1,9 +1,11 @@
 from uuid import UUID
 
 from covid_screener.adapters.orm import orm
+from covid_screener.domain.exceptions.exceptions import VaccinationException, \
+    ValidationError
 from covid_screener.service.services import create_department, \
     load_departments, edit_department, create_employee, load_employees, \
-    edit_employee
+    edit_employee, create_screening, load_screenings
 from covid_screener.service.unit_of_work import SqlAlchemyUnitOfWork
 from flask import Flask, request
 
@@ -67,6 +69,50 @@ def update_employee():
 def get_employees():
     result = load_employees(SqlAlchemyUnitOfWork())
     return result, 200
+
+
+@app.route("/screening", methods=['POST'])
+def add_screening():
+    has_fever = request.json['has_fever']
+    has_cough = request.json['has_cough']
+    has_shortness_of_breath = request.json['has_shortness_of_breath']
+    has_fatigue = request.json['has_fatigue']
+    has_body_aches = request.json['has_body_aches']
+    has_loss_of_taste = request.json['has_loss_of_taste']
+    has_loss_of_smell = request.json['has_loss_of_smell']
+    has_sore_throat = request.json['has_sore_throat']
+    has_runny_nose = request.json['has_runny_nose']
+    has_nausea = request.json['has_nausea']
+    is_vomiting = request.json['is_vomiting']
+    has_diarrhea = request.json['has_diarrhea']
+    has_tested_positive = request.json['has_tested_positive']
+    awaiting_test_results = request.json['awaiting_test_results']
+    positive_in_last_fortnight = request.json['positive_in_last_fortnight']
+    is_vaccinated = request.json['is_vaccinated']
+    employee_uuid = UUID(request.json['employee_uuid'])
+    result = create_screening(has_fever, has_cough, has_shortness_of_breath,
+                              has_fatigue, has_body_aches, has_loss_of_taste,
+                              has_loss_of_smell, has_sore_throat,
+                              has_runny_nose, has_nausea, is_vomiting,
+                              has_diarrhea, has_tested_positive,
+                              awaiting_test_results,
+                              positive_in_last_fortnight,
+                              is_vaccinated, employee_uuid,
+                              SqlAlchemyUnitOfWork())
+    return result, 201
+
+
+@app.route("/screening", methods=['GET'])
+def get_screenings():
+    result = load_screenings(SqlAlchemyUnitOfWork())
+    return result, 200
+
+
+@app.errorhandler(Exception)
+def handle_exception(e):
+    if isinstance(e, VaccinationException) or isinstance(e, ValidationError):
+        return {"error": str(e)}, 400
+    return {"error": "Sorry, something went wrong"}, 500
 
 
 if __name__ == '__main__':

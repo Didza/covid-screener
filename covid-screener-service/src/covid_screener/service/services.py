@@ -86,8 +86,7 @@ def create_screening(has_fever: bool, has_cough: bool,
                      has_diarrhea: bool, has_tested_positive: bool,
                      awaiting_test_results: bool,
                      positive_in_last_fortnight: bool, is_vaccinated: bool,
-                     department_uuid: UUID, employee_uuid: UUID,
-                     uow: AbstractUnitOfWork):
+                     employee_uuid: UUID, uow: AbstractUnitOfWork):
     with uow:
         symptom = Symptom(has_fever, has_cough, has_shortness_of_breath,
                           has_fatigue, has_body_aches, has_loss_of_taste,
@@ -97,19 +96,16 @@ def create_screening(has_fever: bool, has_cough: bool,
                                       awaiting_test_results,
                                       positive_in_last_fortnight,
                                       is_vaccinated)
-        department = uow.departments.get(department_uuid)
-        if not department:
-            raise ValidationError('This department does not exist.')
         employee = uow.employees.get(employee_uuid)
         if not employee:
             raise ValidationError('This employee does not exist.')
         screening = Screening(employee, questionnaire)
         uow.screenings.add(screening)
         uow.commit()
-        return str(screening.uuid)
+        return base_response(screening)
 
 
 def load_screenings(uow: AbstractUnitOfWork):
     with uow:
         screenings = uow.screenings.load_all()
-        return screenings
+        return base_response(screenings)
