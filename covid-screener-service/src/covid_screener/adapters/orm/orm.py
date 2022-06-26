@@ -67,7 +67,7 @@ screenings = Table(
 def start_mappers():
     departments_mapper = mapper(Department, departments)
     employees_mapper = mapper(Employee, employees, properties={
-        'employee': relationship(departments_mapper)
+        'department': relationship(departments_mapper)
     })
     symptoms_mapper = mapper(Symptom, symptoms)
     questionnaires_mapper = mapper(Questionnaire, questionnaires, properties={

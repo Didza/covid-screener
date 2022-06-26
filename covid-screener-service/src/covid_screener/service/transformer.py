@@ -4,7 +4,7 @@ import abc
 from typing import Union, List, Dict, Type
 
 from covid_screener.domain.model.base_model import BaseModel
-from covid_screener.domain.model.screening import Department
+from covid_screener.domain.model.screening import Department, Employee
 
 
 class AbstractTransformer(abc.ABC):
@@ -37,6 +37,24 @@ class DepartmentTransformer(AbstractTransformer):
         }
 
 
+class EmployeeTransformer(AbstractTransformer):
+    @staticmethod
+    def _build_json(item: Employee):
+        return {
+            "uuid": str(item.uuid),
+            "username": item.username,
+            "name": item.name,
+            "surname": item.surname,
+            "email": item.email,
+            "department": {
+              "uuid": str(item.department.uuid),
+              "name": item.department.name,
+            },
+            "is_admin": item.is_admin,
+            "is_active": item.is_active
+        }
+
+
 def base_response(data: Union[BaseModel, List[BaseModel]]):
     if not data:
         return {'items': []}
@@ -49,5 +67,6 @@ def base_response(data: Union[BaseModel, List[BaseModel]]):
 
 
 TRANSFORMERS = {
-    Department: DepartmentTransformer
+    Department: DepartmentTransformer,
+    Employee: EmployeeTransformer,
 }  # type: Dict[Type[BaseModel], Type[AbstractTransformer]]

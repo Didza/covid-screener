@@ -24,7 +24,8 @@ def edit_department(department_uuid: UUID, name: Optional[str],
         department = uow.departments.get(department_uuid)
         if not department:
             raise ValidationError('This department does not exist.')
-        department.name = name
+        if name:
+            department.name = name
         uow.commit()
         return base_response(department)
 
@@ -48,7 +49,7 @@ def create_employee(username: str, name: str, surname: str, email: str,
                                 is_admin)
             uow.employees.add(employee)
             uow.commit()
-        return str(employee.uuid)
+        return base_response(employee)
 
 
 def edit_employee(employee_uuid: UUID, department_uuid: Optional[UUID],
@@ -68,13 +69,13 @@ def edit_employee(employee_uuid: UUID, department_uuid: Optional[UUID],
                 raise ValidationError('This department uuid does not exist.')
             employee.department = department
         uow.commit()
-        return str(employee.uuid)
+        return base_response(employee)
 
 
 def load_employees(uow: AbstractUnitOfWork):
     with uow:
         employees = uow.employees.load_all()
-        return employees
+        return base_response(employees)
 
 
 def create_screening(has_fever: bool, has_cough: bool,

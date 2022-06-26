@@ -40,8 +40,7 @@ class DepartmentRepository(SqlAlchemyRepository):
 
 class EmployeeRepository(SqlAlchemyRepository):
     def get_by_email(self, email: str):
-        return self.session.query(self.model).filter_by(
-            email=email).first()
+        return self.session.query(self.model).filter_by(email=email).first()
 
 
 class SymptomRepository(SqlAlchemyRepository):
