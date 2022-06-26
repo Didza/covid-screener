@@ -126,8 +126,6 @@ class TestService:
                                           awaiting_test_results=False,
                                           positive_in_last_fortnight=False,
                                           is_vaccinated=True,
-                                          department_uuid=
-                                          default_department.uuid,
                                           employee_uuid=default_employee.uuid,
                                           uow=uow)
         assert screening_uuid is not None

@@ -8,10 +8,39 @@ volumes:
     postgres_data:
 
 services:
+  covid-screener-api:
+    image: covid-screener-api:1.0.0
+    container_name: covid-screener-api
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - covid-screener-postgres
+    environment:
+      - DB_HOST=covid-screener-postgres
+      - DB_PASSWORD=test1234
+      - API_HOST=covid-screener-api
+      - PYTHONDONTWRITEBYTECODE=1
+    volumes:
+      - ./src:/src
+      - ./tests:/tests
+    ports:
+      - 16006:80
+    networks:
+      - covid-screener-network
+    entrypoint:
+      - gunicorn
+      - --bind=0.0.0.0:80
+      - --workers=1
+      - --timeout=1800
+      - covid_screener.entrypoints.flask_app:app
+      - --reload
+
   covid-screener-postgres:
     image: postgres:13
     container_name: covid-screener-postgres
-    restart: always
+    restart: unless-stopped
     volumes:
       - postgres_data:/var/lib/postgresql/data
     environment:
