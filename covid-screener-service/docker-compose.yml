@@ -11,7 +11,7 @@ services:
   covid-screener-api:
     image: covid-screener-api:1.0.0
     container_name: covid-screener-api
-    restart: unless-stopped
+    restart: always
     build:
       context: .
       dockerfile: Dockerfile
@@ -33,14 +33,13 @@ services:
       - gunicorn
       - --bind=0.0.0.0:80
       - --workers=5
-      - --timeout=1800
       - covid_screener.entrypoints.flask_app:app
       - --reload
 
   covid-screener-postgres:
     image: postgres:13
     container_name: covid-screener-postgres
-    restart: unless-stopped
+    restart: always
     volumes:
       - postgres_data:/var/lib/postgresql/data
     environment:
