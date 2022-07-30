@@ -1,6 +1,6 @@
-from typing import Optional
-from uuid import UUID
-
+from covid_screener.domain.commands.commands import CreateDepartment, \
+    UpdateDepartment, CreateScreening, CreateEmployee, UpdateEmployee, \
+    LoadDepartments, LoadEmployees, LoadScreenings
 from covid_screener.domain.exceptions.exceptions import ValidationError
 from covid_screener.domain.model.screening import Department, Employee, \
     Symptom, Questionnaire, Screening
@@ -8,63 +8,58 @@ from covid_screener.service.transformer import base_response
 from covid_screener.service.unit_of_work import AbstractUnitOfWork
 
 
-def create_department(name: str, uow: AbstractUnitOfWork):
+def create_department(cmd: CreateDepartment, uow: AbstractUnitOfWork):
     with uow:
-        department = uow.departments.get_by_name(name)
+        department = uow.departments.get_by_name(cmd.name)
         if not department:
-            department = Department(name)
+            department = Department(cmd.name)
             uow.departments.add(department)
             uow.commit()
         return base_response(department)
 
 
-def edit_department(department_uuid: UUID, name: Optional[str],
-                    uow: AbstractUnitOfWork):
+def edit_department(cmd: UpdateDepartment, uow: AbstractUnitOfWork):
     with uow:
-        department = uow.departments.get(department_uuid)
+        department = uow.departments.get(cmd.department_uuid)
         if not department:
             raise ValidationError('This department does not exist.')
-        if name:
-            department.name = name
+        if cmd.name:
+            department.name = cmd.name
         uow.commit()
         return base_response(department)
 
 
-def load_departments(uow: AbstractUnitOfWork):
+def load_departments(query: LoadDepartments, uow: AbstractUnitOfWork):
     with uow:
         departments = uow.departments.load_all()
         return base_response(departments)
 
 
-def create_employee(username: str, name: str, surname: str, email: str,
-                    department_uuid: UUID, is_admin: bool,
-                    uow: AbstractUnitOfWork):
+def create_employee(cmd: CreateEmployee, uow: AbstractUnitOfWork):
     with uow:
-        employee = uow.employees.get_by_email(email)
+        employee = uow.employees.get_by_email(cmd.email)
         if not employee:
-            department = uow.departments.get(department_uuid)
+            department = uow.departments.get(cmd.department_uuid)
             if not department:
                 raise ValidationError('This department uuid does not exist.')
-            employee = Employee(username, name, surname, email, department,
-                                is_admin)
+            employee = Employee(cmd.username, cmd.name, cmd.surname, cmd.email,
+                                department, cmd.is_admin)
             uow.employees.add(employee)
             uow.commit()
         return base_response(employee)
 
 
-def edit_employee(employee_uuid: UUID, department_uuid: Optional[UUID],
-                  name: Optional[str], surname: Optional[str],
-                  uow: AbstractUnitOfWork):
+def edit_employee(cmd: UpdateEmployee, uow: AbstractUnitOfWork):
     with uow:
-        employee = uow.employees.get(employee_uuid)
+        employee = uow.employees.get(cmd.employee_uuid)
         if not employee:
             raise ValidationError('This employee does not exist.')
-        if name:
-            employee.name = name
-        if surname:
-            employee.surname = surname
-        if department_uuid:
-            department = uow.departments.get(department_uuid)
+        if cmd.name:
+            employee.name = cmd.name
+        if cmd.surname:
+            employee.surname = cmd.surname
+        if cmd.department_uuid:
+            department = uow.departments.get(cmd.department_uuid)
             if not department:
                 raise ValidationError('This department uuid does not exist.')
             employee.department = department
@@ -72,31 +67,25 @@ def edit_employee(employee_uuid: UUID, department_uuid: Optional[UUID],
         return base_response(employee)
 
 
-def load_employees(uow: AbstractUnitOfWork):
+def load_employees(query: LoadEmployees, uow: AbstractUnitOfWork):
     with uow:
         employees = uow.employees.load_all()
         return base_response(employees)
 
 
-def create_screening(has_fever: bool, has_cough: bool,
-                     has_shortness_of_breath: bool, has_fatigue: bool,
-                     has_body_aches: bool, has_loss_of_taste: bool,
-                     has_loss_of_smell: bool, has_sore_throat: bool,
-                     has_runny_nose: bool, has_nausea: bool, is_vomiting: bool,
-                     has_diarrhea: bool, has_tested_positive: bool,
-                     awaiting_test_results: bool,
-                     positive_in_last_fortnight: bool, is_vaccinated: bool,
-                     employee_uuid: UUID, uow: AbstractUnitOfWork):
+def create_screening(cmd: CreateScreening, uow: AbstractUnitOfWork):
     with uow:
-        symptom = Symptom(has_fever, has_cough, has_shortness_of_breath,
-                          has_fatigue, has_body_aches, has_loss_of_taste,
-                          has_loss_of_smell, has_sore_throat, has_runny_nose,
-                          has_nausea, is_vomiting, has_diarrhea)
-        questionnaire = Questionnaire(symptom, has_tested_positive,
-                                      awaiting_test_results,
-                                      positive_in_last_fortnight,
-                                      is_vaccinated)
-        employee = uow.employees.get(employee_uuid)
+        symptom = Symptom(cmd.has_fever, cmd.has_cough,
+                          cmd.has_shortness_of_breath,
+                          cmd.has_fatigue, cmd.has_body_aches,
+                          cmd.has_loss_of_taste, cmd.has_loss_of_smell,
+                          cmd.has_sore_throat, cmd.has_runny_nose,
+                          cmd.has_nausea, cmd.is_vomiting, cmd.has_diarrhea)
+        questionnaire = Questionnaire(symptom, cmd.has_tested_positive,
+                                      cmd.awaiting_test_results,
+                                      cmd.positive_in_last_fortnight,
+                                      cmd.is_vaccinated)
+        employee = uow.employees.get(cmd.employee_uuid)
         if not employee:
             raise ValidationError('This employee does not exist.')
         screening = Screening(employee, questionnaire)
@@ -105,7 +94,7 @@ def create_screening(has_fever: bool, has_cough: bool,
         return base_response(screening)
 
 
-def load_screenings(uow: AbstractUnitOfWork):
+def load_screenings(query: LoadScreenings, uow: AbstractUnitOfWork):
     with uow:
         screenings = uow.screenings.load_all()
         return base_response(screenings)
